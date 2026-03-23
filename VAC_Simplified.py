@@ -1,18 +1,46 @@
 import os
 import subprocess
-from datetime import datetime
+import tkinter.simpledialog as tk_dialog
+import tkinter.filedialog as tk_filedialog
 
 
 
-VRCFURY_REPO_URL = "https://vcc.vrcfury.com/"
-LILTOONSHADER_REPO_URL = "https://lilxyzw.github.io/vpm-repos/vpm.json"
-POIYOMISHADER_REPO_URL = "https://poiyomi.github.io/vpm/index.json"
-MODULARAVATAR_REPO_URL = "https://vpm.nadena.dev/vpm.json"
-AAOAVATAROPTIMIZER_REPO_URL = "https://vpm.anatawa12.com/vpm.json"
-D4RKAVATAROPTIMIZER_REPO_URL = "https://d4rkc0d3r.github.io/vpm-repos/main.json"
-AVATARCOMPRESSOR_REPO_URL = "https://vpm.limitex.dev/index.json"
-GOGOLOCO_REPO_URL = "https://Spokeek.github.io/goloco/index.json"
+# v format: "REPO": ["PACKAGE_1", "PACKAGE_2", ...]
+PACKAGES = {
+	# Packages from official SDK: Gesture Manager
+	"": ["vrchat.blackstartx.gesture-manager"],
 
+	# VRCFury
+	"https://vcc.vrcfury.com/": ["com.vrcfury.vrcfury"],
+
+	# lilToons shader
+	"https://lilxyzw.github.io/vpm-repos/vpm.json": ["jp.lilxyzw.liltoon"],
+
+	# Poiyomi Toon Shader
+	"https://poiyomi.github.io/vpm/index.json": ["com.poiyomi.toon"],
+
+	# Modular Avatar
+	"https://vpm.nadena.dev/vpm.json": ["nadena.dev.modular-avatar"],
+
+	# AAO: Avatar Optimizer
+	"https://vpm.anatawa12.com/vpm.json": ["com.anatawa12.avatar-optimizer"],
+
+	# d4rkAvatarOptimizer
+	"https://d4rkc0d3r.github.io/vpm-repos/main.json": ["d4rkpl4y3r.d4rkavataroptimizer"],
+
+	# Avatar Compressor
+	"https://vpm.limitex.dev/index.json": ["dev.limitex.avatar-compressor"],
+
+	# GoGo Loco
+	"https://Spokeek.github.io/goloco/index.json": ["gogoloco"]
+}
+
+
+
+project_name = ""
+while project_name == "": project_name = tk_dialog.askstring("", "Project name (can be anything):")
+
+project_path = tk_filedialog.askdirectory(title="Project path")
 
 
 print("Installing/Updating ALCOM...")
@@ -117,49 +145,28 @@ os.reload_environ()
 
 print("Adding VPM repositories...")
 
-print("Adding VRCFury repo...")
-subprocess.run(f"vpm add repo {VRCFURY_REPO_URL}", check=True)
-
-print("Adding lilToon shader repo...")
-subprocess.run(f"vpm add repo {LILTOONSHADER_REPO_URL}", check=True)
-
-print("Adding Poiyomi Toon Shader repo...")
-subprocess.run(f"vpm add repo {POIYOMISHADER_REPO_URL}", check=True)
-
-print("Adding Modular Avatar repo...")
-subprocess.run(f"vpm add repo {MODULARAVATAR_REPO_URL}", check=True)
-
-print("Adding AAO: Avatar Optimizer repo...")
-subprocess.run(f"vpm add repo {AAOAVATAROPTIMIZER_REPO_URL}", check=True)
-
-print("Adding d4rkAvatarOptimizer repo...")
-subprocess.run(f"vpm add repo {D4RKAVATAROPTIMIZER_REPO_URL}", check=True)
-
-print("Adding Avatar Compressor repo...")
-subprocess.run(f"vpm add repo {AVATARCOMPRESSOR_REPO_URL}", check=True)
-
-print("Adding GoGo Loco repo...")
-subprocess.run(f"vpm add repo {GOGOLOCO_REPO_URL}", check=True)
+for repo in PACKAGES.keys():
+	if repo == "": continue
+	print(f"Adding repo: {repo}...")
+	subprocess.run(f"vpm add repo {repo}")
 
 
 print("Creating new avatar project...")
-
-project_dir_name = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
 
 try:
 	subprocess.run([
 		"vpm",
 		"new",
-		project_dir_name,
+		project_name,
 		"Avatar",
 		"-p",
-		"."
+		project_path
 	], check=True)
 except Exception as e:
 	input(f"ERROR: Failed to create new Avatar project\n{e}")
 	exit(1)
 
-os.chdir(project_dir_name)
+os.chdir(os.path.join(project_path, project_name))
 
 try:
 	subprocess.run([
@@ -175,32 +182,10 @@ except Exception as e:
 
 print("Adding packages to avatar project...")
 
-print("Adding package: VRCFury...")
-subprocess.run(f"vpm add package com.vrcfury.vrcfury", check=True)
-
-print("Adding package: lilToon...")
-subprocess.run(f"vpm add package jp.lilxyzw.liltoon", check=True)
-
-print("Adding package: Poiyomi Toon Shader...")
-subprocess.run(f"vpm add package com.poiyomi.toon", check=True)
-
-print("Adding package: Modular Avatar...")
-subprocess.run(f"vpm add package nadena.dev.modular-avatar", check=True)
-
-print("Adding package: AAO: Avatar Optimizer...")
-subprocess.run(f"vpm add package com.anatawa12.avatar-optimizer", check=True)
-
-print("Adding package: d4rkAvatarOptimizer...")
-subprocess.run(f"vpm add package d4rkpl4y3r.d4rkavataroptimizer", check=True)
-
-print("Adding package: Avatar Compressor...")
-subprocess.run(f"vpm add package dev.limitex.avatar-compressor", check=True)
-
-print("Adding package: GoGoLoco...")
-subprocess.run(f"vpm add package gogoloco", check=True)
-
-print("Adding package: Gesture Manager...")
-subprocess.run(f"vpm add package vrchat.blackstartx.gesture-manager", check=True)
+for packages in PACKAGES.values():
+	for package in packages:
+		print(f"Adding package: {package}...")
+		subprocess.run(f"vpm add package {package}")
 
 
 print("Done!")
