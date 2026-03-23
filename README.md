@@ -19,7 +19,7 @@ Download -> Run as admin/root -> Open newly-created project in ALCOM (project wi
 
 (at least Python 3.14 is required)
 
-`pyinstaller -F VAC_Simplified.py`
+`pyinstaller -F VAC_Simplified.py --uac-admin`
 
 
 # Basics
