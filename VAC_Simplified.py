@@ -38,9 +38,10 @@ PACKAGES = {
 
 
 project_name = tk_dialog.askstring("", "Project name (can be anything):")
-if project_name == "": exit(0)
+if project_name == "" or project_name == None: exit(0)
 
 project_path = tk_filedialog.askdirectory(title="Project path")
+if project_path == "": exit(0)
 
 
 print("Installing/Updating ALCOM...")
