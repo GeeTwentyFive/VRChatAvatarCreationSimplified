@@ -37,8 +37,8 @@ PACKAGES = {
 
 
 
-project_name = ""
-while project_name == "": project_name = tk_dialog.askstring("", "Project name (can be anything):")
+project_name = tk_dialog.askstring("", "Project name (can be anything):")
+if project_name == "": exit(0)
 
 project_path = tk_filedialog.askdirectory(title="Project path")
 
