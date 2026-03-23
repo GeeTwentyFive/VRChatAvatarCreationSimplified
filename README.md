@@ -14,7 +14,7 @@ Tool which installs dependencies (ALCOM, .NET, VPM, Unity Hub, Unity, ...) and p
 
 # Usage
 
-Download -> Run as admin/root -> Open newly-created project in ALCOM (project will be named as current date and time)
+Download -> Run as admin/root -> Open project in ALCOM
 
 
 # Building
