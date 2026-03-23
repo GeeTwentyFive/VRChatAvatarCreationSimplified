@@ -14,7 +14,7 @@ Tool which installs dependencies (ALCOM, .NET, VPM, Unity Hub, Unity, ...) and p
 
 # Usage
 
-Download -> Run as admin/root -> Open project in ALCOM
+[Download](https://github.com/GeeTwentyFive/VRChatAvatarCreationSimplified/releases/latest) -> Run as admin/root -> Open project in ALCOM
 
 
 # Building
