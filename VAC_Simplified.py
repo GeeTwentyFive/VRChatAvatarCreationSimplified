@@ -68,7 +68,8 @@ try:
 		alcom = Path.home() / "Applications" / "alcom.AppImage"
 		urllib.request.urlretrieve(
 			BeautifulSoup(
-				urllib.request.urlopen(ALCOM_URL).read().decode('utf-8')
+				urllib.request.urlopen(ALCOM_URL).read().decode('utf-8'),
+				"html.parser"
 			).find(id=ALCOM_HTML_LINUX_DOWNLOAD_ELEM_ID).get('href'),
 
 			alcom
@@ -105,9 +106,9 @@ try:
 		elif which("pacman"):
 			subprocess.run(["sudo", "pacman", "-Sy", "--noconfirm", "dotnet-sdk-8.0"], check=True)
 		else:
-			subprocess.run("curl -fsSL https://dot.net/v1/dotnet-install.sh | bash", check=True, shell=True)
+			subprocess.run("curl -fsSL https://dot.net/v1/dotnet-install.sh | bash -s -- --channel 8.0", check=True, shell=True)
 			# ^ + add to path:
-			path_export_cmd = f'export PATH="$PATH:{str(Path.home() / ".dotnet")}"'
+			path_export_cmd = f'export PATH="$PATH:{str(Path.home() / ".dotnet")}:{str(Path.home() / ".dotnet/tools")}"'
 			subprocess.run(path_export_cmd, check=True, shell=True)
 			bashrc = Path.home() / ".bashrc"
 			if bashrc.exists(): open(bashrc, "a").write(f'\n{path_export_cmd}\n')
