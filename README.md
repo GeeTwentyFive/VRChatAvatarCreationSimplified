@@ -17,13 +17,6 @@ Tool which installs dependencies (ALCOM, .NET, VPM, Unity Hub, Unity, ...) and p
 [Download](https://github.com/GeeTwentyFive/VRChatAvatarCreationSimplified/releases/latest) -> Run as admin/root -> Open project in ALCOM
 
 
-# Building
-
-(at least Python 3.14 is required)
-
-`pyinstaller -F VAC_Simplified.py --uac-admin`
-
-
 # Basics
 
 1) Find an avatar base on https://boothplorer.com/avatars (more items = better)
@@ -49,3 +42,17 @@ Tool which installs dependencies (ALCOM, .NET, VPM, Unity Hub, Unity, ...) and p
 - Eye/face tracking support: https://docs.vrcft.io/docs/intro/getting-started
 
 - Synchronize Lovense toys with VRChat: https://osc.toys/getting-started
+
+
+# Building
+
+(at least Python 3.14 is required)
+
+1) Get **dependencies:** `beautifulsoup4`
+
+2) `pyinstaller -F VAC_Simplified.py --uac-admin`
+
+
+# Contributors
+
+- [mitowo](https://github.com/mitowo)

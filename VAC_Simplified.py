@@ -2,6 +2,10 @@ import os
 import subprocess
 import tkinter.simpledialog as tk_dialog
 import tkinter.filedialog as tk_filedialog
+from shutil import which
+from pathlib import Path
+import urllib.request
+from bs4 import BeautifulSoup
 
 
 
@@ -35,6 +39,9 @@ PACKAGES = {
 	"https://Spokeek.github.io/goloco/index.json": ["gogoloco"]
 }
 
+ALCOM_URL = "https://vrc-get.anatawa12.com/alcom/"
+ALCOM_HTML_LINUX_DOWNLOAD_ELEM_ID = "btn-download-linux"
+
 
 
 project_name = tk_dialog.askstring("", "Project name (can be anything):")
@@ -55,10 +62,24 @@ try:
 			"--accept-package-agreements",
 			"--accept-source-agreements"
 		], check=True)
+
 	else:
-		pass # TODO: Implement for Linux
+		Path.home().joinpath("Applications").mkdir(parents=True, exist_ok=True)
+		alcom = Path.home() / "Applications" / "alcom.AppImage"
+		urllib.request.urlretrieve(
+			BeautifulSoup(
+				urllib.request.urlopen(ALCOM_URL).read().decode('utf-8')
+			).find(id=ALCOM_HTML_LINUX_DOWNLOAD_ELEM_ID).get('href'),
+
+			alcom
+		)
+		alcom.chmod(0o755)
 except Exception as e:
-	if subprocess.run("winget list anatawa12.ALCOM").returncode != 0:
+	if (
+		(os.name == "nt" and subprocess.run(["winget", "list", "anatawa12.ALCOM"]).returncode != 0)
+		or
+		(os.name != "nt")
+	):
 		input(f"ERROR: Failed to install ALCOM\n{e}")
 		exit(1)
 
@@ -74,10 +95,25 @@ try:
 			"--accept-package-agreements",
 			"--accept-source-agreements"
 		], check=True)
-	else: # NOTE: untested on Linux
-		subprocess.run("curl https://dot.net/v1/dotnet-install.sh | bash", check=True, shell=True)
+
+	else:
+		if which("apt"):
+			subprocess.run(["sudo", "apt", "update"], check=True)
+			subprocess.run(["sudo", "apt", "install", "-y", "dotnet-sdk-8.0"], check=True)
+		elif which("dnf"):
+			subprocess.run(["sudo", "dnf", "install", "-y", "dotnet-sdk-8.0"], check=True)
+		elif which("pacman"):
+			subprocess.run(["sudo", "pacman", "-Sy", "--noconfirm", "dotnet-sdk-8.0"], check=True)
+		else:
+			subprocess.run("curl -fsSL https://dot.net/v1/dotnet-install.sh | bash", check=True, shell=True)
+			# ^ + add to path:
+			path_export_cmd = f'export PATH="$PATH:{str(Path.home() / ".dotnet")}"'
+			subprocess.run(path_export_cmd, check=True, shell=True)
+			bashrc = Path.home() / ".bashrc"
+			if bashrc.exists(): open(bashrc, "a").write(f'\n{path_export_cmd}\n')
 except Exception as e:
-	if subprocess.run("winget list Microsoft.Dotnet.SDK.8").returncode != 0:
+	os.reload_environ() # So that the following check can work
+	if subprocess.run(["dotnet", "--version"]).returncode != 0:
 		input(f"ERROR: Failed to install dotnet\n{e}")
 		exit(1)
 
@@ -117,11 +153,23 @@ except Exception as e:
 print("Installing/Updating Unity Hub...")
 
 try:
-	subprocess.run([
-		"vpm",
-		"install",
-		"hub"
-	], check=True)
+	if os.name == "nt":
+		subprocess.run([
+			"vpm",
+			"install",
+			"hub"
+		], check=True)
+	
+	else:
+		if which("paru"):
+			subprocess.run(["sudo", "paru", "-Sy", "--noconfirm", "unityhub"], check=True)
+		elif which("yay"):
+			subprocess.run(["sudo", "yay", "-Sy", "--noconfirm", "unityhub"], check=True)
+		else:
+			Path.home().joinpath("Applications").mkdir(parents=True, exist_ok=True)
+			unityhub = Path.home() / "Applications" / "UnityHub.AppImage"
+			urllib.request.urlretrieve("https://public-cdn.cloud.unity3d.com/hub/prod/UnityHub.AppImage", unityhub)
+			unityhub.chmod(0o755)
 except Exception as e:
 	input(f"ERROR: Failed to install Unity Hub (try running as admin/root?)\n{e}")
 	exit(1)
@@ -149,7 +197,7 @@ print("Adding VPM repositories...")
 for repo in PACKAGES.keys():
 	if repo == "": continue
 	print(f"Adding repo: {repo}...")
-	subprocess.run(f"vpm add repo {repo}")
+	subprocess.run(["vpm", "add", "repo", repo])
 
 
 print("Creating new avatar project...")
@@ -186,7 +234,7 @@ print("Adding packages to avatar project...")
 for packages in PACKAGES.values():
 	for package in packages:
 		print(f"Adding package: {package}...")
-		subprocess.run(f"vpm add package {package}")
+		subprocess.run(["vpm", "add", "package", package])
 
 
 print("Done!")
