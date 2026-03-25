@@ -5,8 +5,9 @@ import tkinter.filedialog as tk_filedialog
 from shutil import which
 from pathlib import Path
 import urllib.request
-from bs4 import BeautifulSoup
 import json
+
+from bs4 import BeautifulSoup
 
 
 
