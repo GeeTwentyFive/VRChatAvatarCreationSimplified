@@ -164,9 +164,7 @@ try:
 		], check=True)
 	
 	else:
-		if which("paru"):
-			subprocess.run(["sudo", "paru", "-Sy", "--noconfirm", "unityhub"], check=True)
-		elif which("yay"):
+		if which("yay"):
 			subprocess.run(["sudo", "yay", "-Sy", "--noconfirm", "unityhub"], check=True)
 		else:
 			Path.home().joinpath("Applications").mkdir(parents=True, exist_ok=True)
