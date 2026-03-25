@@ -170,9 +170,9 @@ try:
 		else:
 			Path.home().joinpath("Applications").mkdir(parents=True, exist_ok=True)
 			unity_hub_path = Path.home() / "Applications" / "UnityHub.AppImage"
-			urllib.request.urlretrieve("https://public-cdn.cloud.unity3d.com/hub/prod/UnityHub.AppImage", unityhub)
+			urllib.request.urlretrieve("https://public-cdn.cloud.unity3d.com/hub/prod/UnityHub.AppImage", unity_hub_path)
 			unity_hub_path.chmod(0o755)
-			
+
 			vpm_settings_path = Path.home() / ".local" / "share" / "VRChatCreatorCompanion" / "settings.json"
 			vpm_settings = json.load(open(str(vpm_settings_path), 'r'))
 			vpm_settings["pathToUnityHub"] = str(unity_hub_path)
