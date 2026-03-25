@@ -183,6 +183,9 @@ except Exception as e:
 os.reload_environ()
 
 
+# TODO: Install fuse2 if on Linux
+
+
 print("Installing/Updating Unity...")
 
 try:
@@ -201,6 +204,8 @@ try:
 			"-v",
 			TARGET_UNITY_VERSION
 		], check=True)
+
+		# TODO?: `vpm check unity` to get path to Unity editor in vpm's settings.json
 except Exception as e:
 	input(f"ERROR: Failed to install Unity\n{e}")
 	exit(1)
