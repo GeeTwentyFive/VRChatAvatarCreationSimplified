@@ -43,6 +43,8 @@ PACKAGES = {
 ALCOM_URL = "https://vrc-get.anatawa12.com/alcom/"
 ALCOM_HTML_LINUX_DOWNLOAD_ELEM_ID = "btn-download-linux"
 
+TARGET_UNITY_VERSION = "2022.3.22f1"
+
 
 
 project_name = tk_dialog.askstring("", "Project name (can be anything):")
@@ -165,18 +167,15 @@ try:
 		], check=True)
 	
 	else:
-		if which("yay"):
-			subprocess.run(["sudo", "yay", "-Sy", "--noconfirm", "unityhub"], check=True)
-		else:
-			Path.home().joinpath("Applications").mkdir(parents=True, exist_ok=True)
-			unity_hub_path = Path.home() / "Applications" / "UnityHub.AppImage"
-			urllib.request.urlretrieve("https://public-cdn.cloud.unity3d.com/hub/prod/UnityHub.AppImage", unity_hub_path)
-			unity_hub_path.chmod(0o755)
+		Path.home().joinpath("Applications").mkdir(parents=True, exist_ok=True)
+		unity_hub_path = Path.home() / "Applications" / "UnityHub.AppImage"
+		urllib.request.urlretrieve("https://public-cdn.cloud.unity3d.com/hub/prod/UnityHub.AppImage", unity_hub_path)
+		unity_hub_path.chmod(0o755)
 
-			vpm_settings_path = Path.home() / ".local" / "share" / "VRChatCreatorCompanion" / "settings.json"
-			vpm_settings = json.load(open(str(vpm_settings_path), 'r'))
-			vpm_settings["pathToUnityHub"] = str(unity_hub_path)
-			json.dump(vpm_settings, open(str(vpm_settings_path), 'w'))
+		vpm_settings_path = Path.home() / ".local" / "share" / "VRChatCreatorCompanion" / "settings.json"
+		vpm_settings = json.load(open(str(vpm_settings_path), 'r'))
+		vpm_settings["pathToUnityHub"] = str(unity_hub_path)
+		json.dump(vpm_settings, open(str(vpm_settings_path), 'w'))
 except Exception as e:
 	input(f"ERROR: Failed to install Unity Hub (try running as admin/root?)\n{e}")
 	exit(1)
@@ -187,11 +186,21 @@ os.reload_environ()
 print("Installing/Updating Unity...")
 
 try:
-	subprocess.run([
-		"vpm",
-		"install",
-		"unity"
-	], check=True)
+	if os.name == "nt":
+		subprocess.run([
+			"vpm",
+			"install",
+			"unity"
+		], check=True)
+	
+	else:
+		subprocess.run([
+			str(unity_hub_path),
+			"--headless",
+			"install",
+			"-v",
+			TARGET_UNITY_VERSION
+		], check=True)
 except Exception as e:
 	input(f"ERROR: Failed to install Unity\n{e}")
 	exit(1)
