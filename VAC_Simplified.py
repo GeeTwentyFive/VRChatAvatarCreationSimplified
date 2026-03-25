@@ -132,8 +132,10 @@ try:
 		"vrchat.vpm.cli"
 	], check=True)
 except Exception as e:
-	input(f"ERROR: Failed to install VRChat Package Manager\n{e}")
-	exit(1)
+	os.reload_environ() # So that the following check can work
+	if subprocess.run(["vpm", "--version"]).returncode != 0:
+		input(f"ERROR: Failed to install VRChat Package Manager\n{e}")
+		exit(1)
 
 os.reload_environ()
 
