@@ -6,6 +6,7 @@ from shutil import which
 from pathlib import Path
 import urllib.request
 from bs4 import BeautifulSoup
+import json
 
 
 
@@ -168,9 +169,14 @@ try:
 			subprocess.run(["sudo", "yay", "-Sy", "--noconfirm", "unityhub"], check=True)
 		else:
 			Path.home().joinpath("Applications").mkdir(parents=True, exist_ok=True)
-			unityhub = Path.home() / "Applications" / "UnityHub.AppImage"
+			unity_hub_path = Path.home() / "Applications" / "UnityHub.AppImage"
 			urllib.request.urlretrieve("https://public-cdn.cloud.unity3d.com/hub/prod/UnityHub.AppImage", unityhub)
-			unityhub.chmod(0o755)
+			unity_hub_path.chmod(0o755)
+			
+			vpm_settings_path = Path.home() / ".local" / "share" / "VRChatCreatorCompanion" / "settings.json"
+			vpm_settings = json.load(open(str(vpm_settings_path), 'r'))
+			vpm_settings["pathToUnityHub"] = str(unity_hub_path)
+			json.dump(vpm_settings, open(str(vpm_settings_path), 'w'))
 except Exception as e:
 	input(f"ERROR: Failed to install Unity Hub (try running as admin/root?)\n{e}")
 	exit(1)
